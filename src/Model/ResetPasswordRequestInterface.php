@@ -39,4 +39,9 @@ interface ResetPasswordRequestInterface
      * Get the user whom requested a password reset.
      */
     public function getUser(): object;
+
+    /**
+     * Get the user whom requested a password reset.
+     */
+    public function getUserId(): int;
 }

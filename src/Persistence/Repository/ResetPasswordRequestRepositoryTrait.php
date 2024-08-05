@@ -20,13 +20,13 @@ use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestInterface;
  */
 trait ResetPasswordRequestRepositoryTrait
 {
-    public function getUserIdentifier(object $user): string
-    {
-        return (string) $this->getEntityManager()
-            ->getUnitOfWork()
-            ->getSingleIdentifierValue($user)
-        ;
-    }
+    // public function getUserIdentifier(object $user): string
+    // {
+    //     return (string) $this->getEntityManager()
+    //         ->getUnitOfWork()
+    //         ->getSingleIdentifierValue($user)
+    //     ;
+    // }
 
     public function persistResetPasswordRequest(ResetPasswordRequestInterface $resetPasswordRequest): void
     {
@@ -44,8 +44,8 @@ trait ResetPasswordRequestRepositoryTrait
         // Normally there is only 1 max request per use, but written to be flexible
         /** @var ResetPasswordRequestInterface $resetPasswordRequest */
         $resetPasswordRequest = $this->createQueryBuilder('t')
-            ->where('t.user = :user')
-            ->setParameter('user', $user)
+            ->where('t.user_id = :user')
+            ->setParameter('user', $user->getId())
             ->orderBy('t.requestedAt', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
@@ -63,8 +63,8 @@ trait ResetPasswordRequestRepositoryTrait
     {
         $this->createQueryBuilder('t')
             ->delete()
-            ->where('t.user = :user')
-            ->setParameter('user', $resetPasswordRequest->getUser())
+            ->where('t.user_id = :user')
+            ->setParameter('user', $resetPasswordRequest->getUserId())
             ->getQuery()
             ->execute()
         ;
@@ -96,8 +96,8 @@ trait ResetPasswordRequestRepositoryTrait
     {
         $query = $this->createQueryBuilder('t')
             ->delete()
-            ->where('t.user = :user')
-            ->setParameter('user', $user)
+            ->where('t.user_id = :user')
+            ->setParameter('user', $user->getId())
         ;
 
         $query->getQuery()->execute();

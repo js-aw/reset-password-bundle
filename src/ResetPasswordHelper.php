@@ -9,6 +9,7 @@
 
 namespace SymfonyCasts\Bundle\ResetPassword;
 
+use Pimcore\Model\DataObject;
 use SymfonyCasts\Bundle\ResetPassword\Exception\ExpiredResetPasswordTokenException;
 use SymfonyCasts\Bundle\ResetPassword\Exception\InvalidResetPasswordTokenException;
 use SymfonyCasts\Bundle\ResetPassword\Exception\TooManyPasswordRequestsException;
@@ -62,9 +63,11 @@ class ResetPasswordHelper implements ResetPasswordHelperInterface
      *
      * @throws TooManyPasswordRequestsException
      */
-    public function generateResetToken(object $user, ?int $resetRequestLifetime = null): ResetPasswordToken
+    public function generateResetToken(int $user_id, ?int $resetRequestLifetime = null): ResetPasswordToken
     {
         $this->resetPasswordCleaner->handleGarbageCollection();
+
+        $user = DataObject\Customer::getById($user_id);
 
         if ($availableAt = $this->hasUserHitThrottling($user)) {
             throw new TooManyPasswordRequestsException($availableAt);
@@ -76,7 +79,7 @@ class ResetPasswordHelper implements ResetPasswordHelperInterface
 
         $generatedAt = ($expiresAt->getTimestamp() - $resetRequestLifetime);
 
-        $tokenComponents = $this->tokenGenerator->createToken($expiresAt, $this->repository->getUserIdentifier($user));
+        $tokenComponents = $this->tokenGenerator->createToken($expiresAt, $user_id);
 
         $passwordResetRequest = $this->repository->createResetPasswordRequest(
             $user,
@@ -121,7 +124,7 @@ class ResetPasswordHelper implements ResetPasswordHelperInterface
 
         $hashedVerifierToken = $this->tokenGenerator->createToken(
             $resetRequest->getExpiresAt(),
-            $this->repository->getUserIdentifier($user),
+            $user->getId(),
             substr($fullToken, self::SELECTOR_LENGTH)
         );
 
@@ -194,5 +197,13 @@ class ResetPasswordHelper implements ResetPasswordHelperInterface
         }
 
         return null;
+    }
+
+    /**
+     *  The user changed their email address. Remove any old reset requests for the user.
+     */
+    public function removeRequests(object $user): void
+    {
+        $this->repository->removeRequests($user);
     }
 }

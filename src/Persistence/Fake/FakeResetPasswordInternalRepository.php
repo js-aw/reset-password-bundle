@@ -31,10 +31,10 @@ final class FakeResetPasswordInternalRepository implements ResetPasswordRequestR
         throw new FakeRepositoryException();
     }
 
-    public function getUserIdentifier(object $user): string
-    {
-        throw new FakeRepositoryException();
-    }
+    // public function getUserIdentifier(object $user): string
+    // {
+    //     throw new FakeRepositoryException();
+    // }
 
     public function persistResetPasswordRequest(ResetPasswordRequestInterface $resetPasswordRequest): void
     {

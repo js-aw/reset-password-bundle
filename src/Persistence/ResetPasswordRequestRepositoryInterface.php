@@ -33,7 +33,7 @@ interface ResetPasswordRequestRepositoryInterface
      *
      * @param object $user User entity - typically implements Symfony\Component\Security\Core\User\UserInterface
      */
-    public function getUserIdentifier(object $user): string;
+    // public function getUserIdentifier(object $user): string;
 
     /**
      * Save a reset password request entity to persistence.

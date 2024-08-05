@@ -1,3 +1,6 @@
+# Fork of ResetPasswordBundle: Customisation for pimcore and members bundle
+
+
 # ResetPasswordBundle: Mind-Blowing (and Secure) Password Resetting for Symfony
 
 Worrying about how to deal with users that can't remember their password? We've 
